@@ -78,6 +78,8 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     if (this.isJumping || this.isDucking) return;
     this.isJumping = true;
     
+    this.scene.sound.play('sfx-jump', { volume: 0.5 });
+    
     // Jump visually logic
     this.scene.tweens.add({
       targets: this,

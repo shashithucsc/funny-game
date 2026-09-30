@@ -25,6 +25,11 @@ export default class BootScene extends Phaser.Scene {
     this.load.image('icon-brain', 'assets/icons/icon-brain.png');
     this.load.image('icon-clock', 'assets/icons/icon-clock.png');
     this.load.image('icon-f', 'assets/icons/icon-f.png');
+    
+    // SFX
+    this.load.audio('sfx-jump', 'assets/sfx/jump.wav');
+    this.load.audio('sfx-collect', 'assets/sfx/collect.wav');
+    this.load.audio('sfx-hit', 'assets/sfx/hit.wav');
   }
 
   create() {

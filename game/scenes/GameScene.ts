@@ -22,6 +22,7 @@ export default class GameScene extends Phaser.Scene {
   private messageText!: Phaser.GameObjects.Text;
   
   private spawnTimer: number = 0;
+  private sparkles!: Phaser.GameObjects.Particles.ParticleEmitter;
   
   private bg!: Phaser.GameObjects.TileSprite;
 
@@ -31,13 +32,24 @@ export default class GameScene extends Phaser.Scene {
 
   create() {
     this.gpa = 2.50;
-    this.gameSpeed = 300;
+    this.gameSpeed = 200; // Slower, more relaxing start
     this.isGameOver = false;
     
     // Add scrolling background (seamless)
     this.bg = this.add.tileSprite(200, 400, 400, 800, 'bg-seamless');
-    // Darken it slightly so characters pop
-    this.bg.setTint(0xcccccc);
+    // Lighten it slightly so characters pop in a relaxing way
+    this.bg.setTint(0xdddddd);
+    
+    // Setup Particles
+    this.sparkles = this.add.particles(0, 0, 'icon-brain', {
+      scale: { start: 0.2, end: 0 },
+      alpha: { start: 1, end: 0 },
+      speed: 100,
+      lifespan: 800,
+      blendMode: 'ADD',
+      emitting: false
+    });
+    this.sparkles.setDepth(20);
 
     this.player = new Player(this, 200, 650);
 
@@ -107,7 +119,9 @@ export default class GameScene extends Phaser.Scene {
   spawnEntity() {
     const lane = Phaser.Math.Between(0, 2);
     const x = this.lanes[lane];
-    const isObstacle = Phaser.Math.Between(0, 100) > 40; // 60% obstacle, 40% collectible
+    
+    // Relaxing mode: 80% Collectibles, 20% Obstacles
+    const isObstacle = Phaser.Math.Between(0, 100) < 20; 
     
     if (isObstacle) {
       const type = Phaser.Math.Between(1, 3);
@@ -127,7 +141,7 @@ export default class GameScene extends Phaser.Scene {
     // Simple jump dodging logic - if player is jumping, they pass over
     if (player.isJumping) return;
     
-    // If ducking, maybe pass under some obstacles? For MVP, let's just make jump dodge
+    this.sound.play('sfx-hit');
     
     this.gpa -= obstacle.gpaPenalty;
     this.updateGPA();
@@ -144,7 +158,10 @@ export default class GameScene extends Phaser.Scene {
   collectItem(player: Player, item: Collectible) {
     if (this.isGameOver) return;
     
-    if (item.type === 'Coffee') {
+    this.sound.play('sfx-collect', { volume: 0.6 });
+    this.sparkles.emitParticleAt(item.x, item.y, 8);
+    
+    if (item.collectibleType === 'Coffee') {
       this.showMessage("CAFFEINE MODE!", '#00ffff');
       // Caffeine effect placeholder
       this.gameSpeed += 50;
@@ -205,10 +222,10 @@ export default class GameScene extends Phaser.Scene {
     this.player.update(time, delta);
     
     this.score += delta * 0.01;
-    this.gameSpeed += delta * 0.005;
+    this.gameSpeed += delta * 0.001; // Much slower scaling for relaxing gameplay
     
     this.spawnTimer += delta;
-    if (this.spawnTimer > 150000 / this.gameSpeed) { // Spawn rate scales with speed
+    if (this.spawnTimer > 180000 / this.gameSpeed) { // Spawn slightly slower
       this.spawnEntity();
       this.spawnTimer = 0;
     }
