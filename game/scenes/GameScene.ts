@@ -25,6 +25,7 @@ export default class GameScene extends Phaser.Scene {
   private sparkles!: Phaser.GameObjects.Particles.ParticleEmitter;
   
   private bg!: Phaser.GameObjects.TileSprite;
+  private bgm!: Phaser.Sound.BaseSound;
 
   constructor() {
     super('GameScene');
@@ -34,6 +35,10 @@ export default class GameScene extends Phaser.Scene {
     this.gpa = 2.50;
     this.gameSpeed = 200; // Slower, more relaxing start
     this.isGameOver = false;
+    
+    // Play BGM
+    this.bgm = this.sound.add('bgm', { loop: true, volume: 0.3 });
+    this.bgm.play();
     
     // Add scrolling background (seamless)
     this.bg = this.add.tileSprite(200, 400, 400, 800, 'bg-seamless');
@@ -208,6 +213,8 @@ export default class GameScene extends Phaser.Scene {
 
   gameOver(reason: string) {
     this.isGameOver = true;
+    if (this.bgm) this.bgm.stop();
+    
     this.player.hit();
     this.time.delayedCall(1000, () => {
       this.scene.start('GameOverScene', { gpa: this.gpa, reason: reason });

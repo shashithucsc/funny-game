@@ -6,6 +6,41 @@ export default class BootScene extends Phaser.Scene {
   }
 
   preload() {
+    const width = this.cameras.main.width;
+    const height = this.cameras.main.height;
+    
+    // Background
+    this.cameras.main.setBackgroundColor('#1a1a2e');
+    
+    const loadingText = this.add.text(width / 2, height / 2 - 50, 'STUDYING...', {
+      fontFamily: 'sans-serif',
+      fontSize: '28px',
+      fontStyle: '900',
+      color: '#ffffff'
+    });
+    loadingText.setOrigin(0.5, 0.5);
+    
+    // Progress box
+    const progressBar = this.add.graphics();
+    const progressBox = this.add.graphics();
+    progressBox.fillStyle(0x000000, 0.8);
+    progressBox.fillRoundedRect(width / 2 - 110, height / 2, 220, 30, 15);
+    progressBox.lineStyle(2, 0x44ff44, 1);
+    progressBox.strokeRoundedRect(width / 2 - 110, height / 2, 220, 30, 15);
+    
+    this.load.on('progress', (value: number) => {
+      progressBar.clear();
+      progressBar.fillStyle(0x44ff44, 1);
+      progressBar.fillRoundedRect(width / 2 - 105, height / 2 + 5, 210 * value, 20, 10);
+      loadingText.setText(`STUDYING... ${Math.floor(value * 100)}%`);
+    });
+    
+    this.load.on('complete', () => {
+      progressBar.destroy();
+      progressBox.destroy();
+      loadingText.destroy();
+    });
+
     // Load assets here
     // Character sprites
     const sprites = [
@@ -30,6 +65,7 @@ export default class BootScene extends Phaser.Scene {
     this.load.audio('sfx-jump', 'assets/sfx/jump.wav');
     this.load.audio('sfx-collect', 'assets/sfx/collect.wav');
     this.load.audio('sfx-hit', 'assets/sfx/hit.wav');
+    this.load.audio('bgm', 'assets/sfx/bgm.wav');
   }
 
   create() {
