@@ -1,15 +1,33 @@
 import os
-from PIL import Image
+from PIL import Image, ImageDraw
 
 def remove_bg(img):
     img = img.convert("RGBA")
-    data = img.getdata()
+    
+    # We will floodfill the background with magenta from the 4 corners
+    w, h = img.size
+    corners = [(0, 0), (w-1, 0), (0, h-1), (w-1, h-1)]
+    
+    # We need an RGB image for floodfill to avoid alpha issues
+    temp_img = img.convert("RGB")
+    
+    for cx, cy in corners:
+        # Check if the corner is close to white before flood filling
+        pixel = temp_img.getpixel((cx, cy))
+        if pixel[0] > 240 and pixel[1] > 240 and pixel[2] > 240:
+            ImageDraw.floodfill(temp_img, (cx, cy), (255, 0, 255), thresh=20)
+            
+    # Now map magenta back to transparent in the original RGBA image
+    temp_data = temp_img.getdata()
+    orig_data = img.getdata()
+    
     newData = []
-    for item in data:
-        if item[0] > 235 and item[1] > 235 and item[2] > 235:
+    for i in range(len(temp_data)):
+        if temp_data[i] == (255, 0, 255):
             newData.append((255, 255, 255, 0))
         else:
-            newData.append(item)
+            newData.append(orig_data[i])
+            
     img.putdata(newData)
     
     bbox = img.getbbox()
