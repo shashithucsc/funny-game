@@ -66,6 +66,7 @@ export default class BootScene extends Phaser.Scene {
     this.load.audio('sfx-collect', 'assets/sfx/collect.wav');
     this.load.audio('sfx-hit', 'assets/sfx/hit.wav');
     this.load.audio('bgm', 'assets/sfx/bgm.wav');
+    this.load.audio('sfx-victory', 'assets/sfx/victory.wav');
   }
 
   create() {

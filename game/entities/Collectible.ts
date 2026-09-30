@@ -23,9 +23,9 @@ export default class Collectible extends Phaser.Physics.Arcade.Sprite {
     this.setScale(0.7); // Scale down the 120x120 icon slightly
     
     switch (collectibleType) {
-      case 'Note': this.gpaBonus = 0.05; break;
-      case 'Book': this.gpaBonus = 0.10; break;
-      case 'Brain': this.gpaBonus = 0.25; break;
+      case 'Note': this.gpaBonus = 0.10; break;
+      case 'Book': this.gpaBonus = 0.20; break;
+      case 'Brain': this.gpaBonus = 0.50; break;
       case 'Coffee': this.gpaBonus = 0.0; break;
     }
     
@@ -33,16 +33,6 @@ export default class Collectible extends Phaser.Physics.Arcade.Sprite {
     const body = this.body as Phaser.Physics.Arcade.Body;
     body.setCircle(this.width * 0.4);
     body.setOffset(this.width * 0.1, this.height * 0.1);
-    
-    // Add floating animation
-    scene.tweens.add({
-      targets: this,
-      y: y + 15,
-      duration: 1000,
-      yoyo: true,
-      repeat: -1,
-      ease: 'Sine.easeInOut'
-    });
   }
 
   update(time: number, delta: number) {

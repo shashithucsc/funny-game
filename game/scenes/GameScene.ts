@@ -125,8 +125,8 @@ export default class GameScene extends Phaser.Scene {
     const lane = Phaser.Math.Between(0, 2);
     const x = this.lanes[lane];
     
-    // Relaxing mode: 80% Collectibles, 20% Obstacles
-    const isObstacle = Phaser.Math.Between(0, 100) < 20; 
+    // Relaxing mode: 90% Collectibles, 10% Obstacles
+    const isObstacle = Phaser.Math.Between(0, 100) < 10; 
     
     if (isObstacle) {
       const type = Phaser.Math.Between(1, 3);
@@ -168,13 +168,12 @@ export default class GameScene extends Phaser.Scene {
     
     if (item.collectibleType === 'Coffee') {
       this.showMessage("CAFFEINE MODE!", '#00ffff');
-      // Caffeine effect placeholder
       this.gameSpeed += 50;
       this.time.delayedCall(5000, () => {
         this.gameSpeed -= 50;
       });
     } else {
-      this.gpa = Math.min(4.0, this.gpa + item.gpaBonus);
+      this.gpa += item.gpaBonus;
       this.updateGPA();
       this.showMessage(`+${item.gpaBonus.toFixed(2)} GPA`, '#44ff44');
     }
@@ -182,9 +181,26 @@ export default class GameScene extends Phaser.Scene {
     item.destroy();
     
     if (this.gpa >= 4.0) {
-      // Victory later, for now just max it
       this.gpa = 4.0;
+      this.updateGPA();
+      this.triggerVictory();
     }
+  }
+
+  triggerVictory() {
+    if (this.isGameOver) return;
+    this.isGameOver = true;
+    if (this.bgm) this.bgm.stop();
+    
+    this.sound.play('sfx-victory');
+    this.player.play('lomasha-celebrate');
+    
+    // Stop scrolling
+    this.gameSpeed = 0;
+    
+    this.time.delayedCall(2000, () => {
+      this.scene.start('VictoryScene');
+    });
   }
 
   updateGPA() {

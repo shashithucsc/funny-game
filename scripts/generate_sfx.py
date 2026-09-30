@@ -61,10 +61,24 @@ def bgm_sound(t, total_samples, i):
     # Soft sine wave
     return 0.3 * envelope * math.sin(2 * math.pi * freq * t)
 
+# 5. Victory Sound (Fanfare)
+def victory_sound(t, total_samples, i):
+    # C major arpeggio fanfare: C5, E5, G5, C6
+    if t < 0.2: freq = 523.25 # C5
+    elif t < 0.4: freq = 659.25 # E5
+    elif t < 0.6: freq = 783.99 # G5
+    else: freq = 1046.50 # C6
+    
+    beat_t = t % 0.2
+    if t >= 0.6: beat_t = t - 0.6
+    envelope = math.exp(-beat_t * 5)
+    
+    return 0.5 * envelope * (math.sin(2 * math.pi * freq * t) + 0.5 * math.sin(4 * math.pi * freq * t))
+
 if __name__ == '__main__':
     generate_wav('public/assets/sfx/collect.wav', 0.4, collect_sound)
     generate_wav('public/assets/sfx/jump.wav', 0.4, jump_sound)
     generate_wav('public/assets/sfx/hit.wav', 0.5, hit_sound)
-    # Generate 4-second loop
     generate_wav('public/assets/sfx/bgm.wav', 4.0, bgm_sound)
+    generate_wav('public/assets/sfx/victory.wav', 1.5, victory_sound)
     print("Generated SFX and BGM.")
