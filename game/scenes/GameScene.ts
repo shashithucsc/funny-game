@@ -12,6 +12,7 @@ export default class GameScene extends Phaser.Scene {
   public gameSpeed: number = 300;
   public score: number = 0;
   private isGameOver: boolean = false;
+  private hasWon: boolean = false;
   
   // Groups
   private obstacles!: Phaser.Physics.Arcade.Group;
@@ -33,8 +34,9 @@ export default class GameScene extends Phaser.Scene {
 
   create() {
     this.gpa = 2.50;
-    this.gameSpeed = 200; // Slower, more relaxing start
+    this.gameSpeed = 250; // Medium start
     this.isGameOver = false;
+    this.hasWon = false;
     
     // Play BGM
     this.bgm = this.sound.add('bgm', { loop: true, volume: 0.3 });
@@ -125,8 +127,8 @@ export default class GameScene extends Phaser.Scene {
     const lane = Phaser.Math.Between(0, 2);
     const x = this.lanes[lane];
     
-    // Relaxing mode: 90% Collectibles, 10% Obstacles
-    const isObstacle = Phaser.Math.Between(0, 100) < 10; 
+    // Medium mode: 60% Collectibles, 40% Obstacles
+    const isObstacle = Phaser.Math.Between(0, 100) < 40; 
     
     if (isObstacle) {
       const type = Phaser.Math.Between(1, 3);
@@ -183,23 +185,43 @@ export default class GameScene extends Phaser.Scene {
     if (this.gpa >= 4.0) {
       this.gpa = 4.0;
       this.updateGPA();
-      this.triggerVictory();
+      if (!this.hasWon) {
+        this.hasWon = true;
+        this.triggerVictory();
+      }
     }
   }
 
   triggerVictory() {
-    if (this.isGameOver) return;
-    this.isGameOver = true;
-    if (this.bgm) this.bgm.stop();
-    
     this.sound.play('sfx-victory');
-    this.player.play('lomasha-celebrate');
+    this.sparkles.emitParticleAt(200, 400, 50); // Burst of particles
     
-    // Stop scrolling
-    this.gameSpeed = 0;
+    // Show giant banner
+    const banner = this.add.text(200, 300, '4.0 GPA!\nGRADUATED!', {
+      fontSize: '48px',
+      color: '#44ff44',
+      fontStyle: '900',
+      stroke: '#000000',
+      strokeThickness: 8,
+      align: 'center'
+    }).setOrigin(0.5).setDepth(200);
     
-    this.time.delayedCall(2000, () => {
-      this.scene.start('VictoryScene');
+    // Animate banner
+    this.tweens.add({
+      targets: banner,
+      scale: { from: 0.5, to: 1.1 },
+      duration: 800,
+      yoyo: true,
+      hold: 1500,
+      onComplete: () => {
+        this.tweens.add({
+          targets: banner,
+          alpha: 0,
+          y: 200,
+          duration: 1000,
+          onComplete: () => banner.destroy()
+        });
+      }
     });
   }
 
@@ -245,7 +267,7 @@ export default class GameScene extends Phaser.Scene {
     this.player.update(time, delta);
     
     this.score += delta * 0.01;
-    this.gameSpeed += delta * 0.001; // Much slower scaling for relaxing gameplay
+    this.gameSpeed += delta * 0.002; // Medium scaling
     
     this.spawnTimer += delta;
     if (this.spawnTimer > 180000 / this.gameSpeed) { // Spawn slightly slower
