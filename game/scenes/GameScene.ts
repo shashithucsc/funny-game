@@ -5,21 +5,22 @@ import Collectible from '../entities/Collectible';
 
 export default class GameScene extends Phaser.Scene {
   private player!: Player;
+  private chaserSprite!: Phaser.GameObjects.Sprite;
   private lanes: number[] = [100, 200, 300];
   
   // Game state
-  public gpa: number = 2.50;
+  public distance: number = 100;
   public gameSpeed: number = 300;
   public score: number = 0;
   private isGameOver: boolean = false;
-  private hasWon: boolean = false;
   
   // Groups
   private obstacles!: Phaser.Physics.Arcade.Group;
   private collectibles!: Phaser.Physics.Arcade.Group;
   
   // UI
-  private gpaText!: Phaser.GameObjects.Text;
+  private distanceText!: Phaser.GameObjects.Text;
+  private scoreText!: Phaser.GameObjects.Text;
   private messageText!: Phaser.GameObjects.Text;
   
   private spawnTimer: number = 0;
@@ -33,10 +34,10 @@ export default class GameScene extends Phaser.Scene {
   }
 
   create() {
-    this.gpa = 2.50;
-    this.gameSpeed = 250; // Medium start
+    this.distance = 100;
+    this.gameSpeed = 250; 
+    this.score = 0;
     this.isGameOver = false;
-    this.hasWon = false;
     
     // Play BGM
     this.bgm = this.sound.add('bgm', { loop: true, volume: 0.3 });
@@ -44,11 +45,10 @@ export default class GameScene extends Phaser.Scene {
     
     // Add scrolling background (seamless)
     this.bg = this.add.tileSprite(200, 400, 400, 800, 'bg-seamless');
-    // Lighten it slightly so characters pop in a relaxing way
-    this.bg.setTint(0xdddddd);
+    this.bg.setTint(0xffe0f0); // slightly pinkish/warm tint
     
     // Setup Particles
-    this.sparkles = this.add.particles(0, 0, 'icon-brain', {
+    this.sparkles = this.add.particles(0, 0, 'icon-shoes', {
       scale: { start: 0.2, end: 0 },
       alpha: { start: 1, end: 0 },
       speed: 100,
@@ -59,6 +59,11 @@ export default class GameScene extends Phaser.Scene {
     this.sparkles.setDepth(20);
 
     this.player = new Player(this, 200, 650);
+    this.player.setDepth(20);
+
+    this.chaserSprite = this.add.sprite(200, 900, 'chaser');
+    this.chaserSprite.setScale(0.5);
+    this.chaserSprite.setDepth(15);
 
     this.obstacles = this.physics.add.group();
     this.collectibles = this.physics.add.group();
@@ -66,20 +71,29 @@ export default class GameScene extends Phaser.Scene {
     this.physics.add.overlap(this.player, this.obstacles, this.hitObstacle as any, undefined, this);
     this.physics.add.overlap(this.player, this.collectibles, this.collectItem as any, undefined, this);
 
-    // GPA UI Panel
-    const gpaBg = this.add.graphics();
-    gpaBg.fillStyle(0x000000, 0.7);
-    gpaBg.fillRoundedRect(10, 10, 200, 50, 15);
-    gpaBg.setDepth(99);
+    // UI Panel
+    const uiBg = this.add.graphics();
+    uiBg.fillStyle(0x000000, 0.7);
+    uiBg.fillRoundedRect(10, 10, 380, 80, 15);
+    uiBg.setDepth(99);
 
-    this.gpaText = this.add.text(25, 20, `GPA: ${this.gpa.toFixed(2)}`, {
-      fontSize: '28px',
+    this.distanceText = this.add.text(25, 20, `Distance: ${Math.floor(this.distance)}m`, {
+      fontSize: '24px',
       color: '#ffffff',
       fontStyle: '900',
       stroke: '#000000',
       strokeThickness: 4
     });
-    this.gpaText.setDepth(100);
+    this.distanceText.setDepth(100);
+
+    this.scoreText = this.add.text(25, 50, `Score: ${Math.floor(this.score)}`, {
+      fontSize: '20px',
+      color: '#ffcc00',
+      fontStyle: '900',
+      stroke: '#000000',
+      strokeThickness: 4
+    });
+    this.scoreText.setDepth(100);
 
     this.messageText = this.add.text(200, 300, '', {
       fontSize: '28px',
@@ -127,15 +141,15 @@ export default class GameScene extends Phaser.Scene {
     const lane = Phaser.Math.Between(0, 2);
     const x = this.lanes[lane];
     
-    // Medium mode: 60% Collectibles, 40% Obstacles
-    const isObstacle = Phaser.Math.Between(0, 100) < 40; 
+    // 50% Collectibles, 50% Obstacles
+    const isObstacle = Phaser.Math.Between(0, 100) < 50; 
     
     if (isObstacle) {
-      const type = Phaser.Math.Between(1, 3);
+      const type = Phaser.Math.Between(1, 2);
       const obs = new Obstacle(this, x, -50, type);
       this.obstacles.add(obs);
     } else {
-      const types = ['Snippet', 'Snippet', 'Docs', 'Algorithm', 'Coffee'];
+      const types = ['Shoes', 'Shoes', 'Coffee'];
       const type = Phaser.Utils.Array.GetRandom(types);
       const col = new Collectible(this, x, -50, type);
       this.collectibles.add(col);
@@ -150,15 +164,15 @@ export default class GameScene extends Phaser.Scene {
     
     this.sound.play('sfx-hit');
     
-    this.gpa -= obstacle.gpaPenalty;
-    this.updateGPA();
+    this.distance -= obstacle.distancePenalty;
+    this.updateUI();
     this.showMessage(obstacle.message, '#ff4444');
     
     this.cameras.main.shake(200, 0.01);
     obstacle.destroy();
     
-    if (this.gpa < 2.0) {
-      this.gameOver("GPA dropped too low!");
+    if (this.distance <= 0) {
+      this.gameOver("You got married!");
     }
   }
 
@@ -169,67 +183,28 @@ export default class GameScene extends Phaser.Scene {
     this.sparkles.emitParticleAt(item.x, item.y, 8);
     
     if (item.collectibleType === 'Coffee') {
-      this.showMessage("CAFFEINE MODE!", '#00ffff');
-      this.gameSpeed += 50;
-      this.time.delayedCall(5000, () => {
-        this.gameSpeed -= 50;
+      this.showMessage("SPEED BOOST!", '#00ffff');
+      this.gameSpeed += 80;
+      this.time.delayedCall(3000, () => {
+        this.gameSpeed -= 80;
       });
     } else {
-      this.gpa += item.gpaBonus;
-      this.updateGPA();
-      this.showMessage(`+${item.gpaBonus.toFixed(2)} GPA`, '#44ff44');
+      this.distance += item.distanceBonus;
+      if (this.distance > 100) this.distance = 100;
+      this.updateUI();
+      this.showMessage(`+${item.distanceBonus} Distance`, '#44ff44');
     }
     
     item.destroy();
-    
-    if (this.gpa >= 4.0) {
-      this.gpa = 4.0;
-      this.updateGPA();
-      if (!this.hasWon) {
-        this.hasWon = true;
-        this.triggerVictory();
-      }
-    }
   }
 
-  triggerVictory() {
-    this.sound.play('sfx-victory');
-    this.sparkles.emitParticleAt(200, 400, 50); // Burst of particles
+  updateUI() {
+    this.distanceText.setText(`Distance: ${Math.floor(this.distance)}m`);
+    this.scoreText.setText(`Score: ${Math.floor(this.score)}`);
     
-    // Show giant banner
-    const banner = this.add.text(200, 300, '4.0 GPA!\nGRADUATED!', {
-      fontSize: '48px',
-      color: '#44ff44',
-      fontStyle: '900',
-      stroke: '#000000',
-      strokeThickness: 8,
-      align: 'center'
-    }).setOrigin(0.5).setDepth(200);
-    
-    // Animate banner
-    this.tweens.add({
-      targets: banner,
-      scale: { from: 0.5, to: 1.1 },
-      duration: 800,
-      yoyo: true,
-      hold: 1500,
-      onComplete: () => {
-        this.tweens.add({
-          targets: banner,
-          alpha: 0,
-          y: 200,
-          duration: 1000,
-          onComplete: () => banner.destroy()
-        });
-      }
-    });
-  }
-
-  updateGPA() {
-    this.gpaText.setText(`GPA: ${this.gpa.toFixed(2)}`);
-    if (this.gpa < 2.5) this.gpaText.setColor('#ff4444');
-    else if (this.gpa > 3.5) this.gpaText.setColor('#44ff44');
-    else this.gpaText.setColor('#ffffff');
+    if (this.distance < 30) this.distanceText.setColor('#ff4444');
+    else if (this.distance > 70) this.distanceText.setColor('#44ff44');
+    else this.distanceText.setColor('#ffffff');
   }
 
   showMessage(text: string, color: string) {
@@ -251,11 +226,22 @@ export default class GameScene extends Phaser.Scene {
 
   gameOver(reason: string) {
     this.isGameOver = true;
+    this.distance = 0;
     if (this.bgm) this.bgm.stop();
     
     this.player.hit();
-    this.time.delayedCall(1000, () => {
-      this.scene.start('GameOverScene', { gpa: this.gpa, reason: reason });
+    
+    // Make chaser reach the player
+    this.tweens.add({
+      targets: this.chaserSprite,
+      y: this.player.y,
+      x: this.player.x,
+      duration: 500,
+      ease: 'Power2'
+    });
+    
+    this.time.delayedCall(1500, () => {
+      this.scene.start('GameOverScene', { score: Math.floor(this.score), reason: reason });
     });
   }
 
@@ -267,10 +253,30 @@ export default class GameScene extends Phaser.Scene {
     this.player.update(time, delta);
     
     this.score += delta * 0.01;
-    this.gameSpeed += delta * 0.002; // Medium scaling
+    this.gameSpeed += delta * 0.002;
+    
+    // Fat man constantly catching up
+    this.distance -= delta * 0.005;
+    this.updateUI();
+    
+    if (this.distance <= 0) {
+      this.gameOver("He caught you!");
+    }
+    
+    // Animate chaser position based on distance
+    // distance 100 -> y = 900
+    // distance 0 -> y = 650
+    const targetY = 650 + (this.distance / 100) * 250;
+    this.chaserSprite.y = Phaser.Math.Linear(this.chaserSprite.y, targetY, 0.1);
+    
+    // Chaser slowly follows player's lane
+    this.chaserSprite.x = Phaser.Math.Linear(this.chaserSprite.x, this.player.x, 0.02);
+    
+    // Wiggle chaser to look like he's running
+    this.chaserSprite.rotation = Math.sin(time / 100) * 0.1;
     
     this.spawnTimer += delta;
-    if (this.spawnTimer > 180000 / this.gameSpeed) { // Spawn slightly slower
+    if (this.spawnTimer > 150000 / this.gameSpeed) {
       this.spawnEntity();
       this.spawnTimer = 0;
     }

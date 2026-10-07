@@ -1,16 +1,15 @@
 import Phaser from 'phaser';
 
 export default class Obstacle extends Phaser.Physics.Arcade.Sprite {
-  public gpaPenalty: number = 0.20;
+  public distancePenalty: number = 30;
   public message: string = "Should've read the case.";
   public obstacleType: number;
   
   constructor(scene: Phaser.Scene, x: number, y: number, type: number) {
-    let texture = 'icon-f';
+    let texture = 'icon-ring';
     switch (type) {
-      case 1: texture = 'icon-f'; break; // Failed paper
-      case 2: texture = 'icon-clock'; break; 
-      case 3: texture = 'icon-clock'; break;
+      case 1: texture = 'icon-ring'; break; 
+      case 2: texture = 'icon-bouquet'; break; 
     }
 
     super(scene, x, y, texture);
@@ -25,16 +24,12 @@ export default class Obstacle extends Phaser.Physics.Arcade.Sprite {
     // Set properties based on type
     switch (type) {
       case 1:
-        this.gpaPenalty = 0.20;
-        this.message = "Syntax Error!";
+        this.distancePenalty = 40;
+        this.message = "Almost Caught!";
         break;
       case 2:
-        this.gpaPenalty = 0.30;
-        this.message = "Merge Conflict!";
-        break;
-      case 3:
-        this.gpaPenalty = 0.40;
-        this.message = "Server Crashed!";
+        this.distancePenalty = 20;
+        this.message = "Stumbled!";
         break;
     }
     
@@ -48,7 +43,7 @@ export default class Obstacle extends Phaser.Physics.Arcade.Sprite {
     this.y += (this.scene as any).gameSpeed * (delta / 1000);
     
     // Add a slight rotation for visual flair
-    if (this.obstacleType === 2 || this.obstacleType === 3) {
+    if (this.obstacleType === 1 || this.obstacleType === 2) {
       this.rotation += 0.05;
     }
 

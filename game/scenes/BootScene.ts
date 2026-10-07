@@ -55,11 +55,11 @@ export default class BootScene extends Phaser.Scene {
 
     this.load.image('bg-seamless', 'assets/seamless_road.jpg');
     
-    this.load.image('icon-book', 'assets/icons/icon-book.png');
+    this.load.image('chaser', 'assets/character/chaser.png');
+    this.load.image('icon-shoes', 'assets/icons/icon-shoes.png');
     this.load.image('icon-coffee', 'assets/icons/icon-coffee.png');
-    this.load.image('icon-brain', 'assets/icons/icon-brain.png');
-    this.load.image('icon-clock', 'assets/icons/icon-clock.png');
-    this.load.image('icon-f', 'assets/icons/icon-f.png');
+    this.load.image('icon-ring', 'assets/icons/icon-ring.png');
+    this.load.image('icon-bouquet', 'assets/icons/icon-bouquet.png');
     
     // SFX
     this.load.audio('sfx-jump', 'assets/sfx/jump.wav');

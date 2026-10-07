@@ -1,15 +1,13 @@
 import Phaser from 'phaser';
 
 export default class Collectible extends Phaser.Physics.Arcade.Sprite {
-  public gpaBonus: number = 0.05;
+  public distanceBonus: number = 20;
   public collectibleType: string = 'Note';
   
   constructor(scene: Phaser.Scene, x: number, y: number, collectibleType: string) {
-    let texture = 'icon-book';
+    let texture = 'icon-shoes';
     switch (collectibleType) {
-      case 'Snippet': texture = 'icon-book'; break; // Note uses book for now
-      case 'Docs': texture = 'icon-book'; break;
-      case 'Algorithm': texture = 'icon-brain'; break;
+      case 'Shoes': texture = 'icon-shoes'; break;
       case 'Coffee': texture = 'icon-coffee'; break;
     }
 
@@ -23,10 +21,8 @@ export default class Collectible extends Phaser.Physics.Arcade.Sprite {
     this.setScale(0.7); // Scale down the 120x120 icon slightly
     
     switch (collectibleType) {
-      case 'Snippet': this.gpaBonus = 0.10; break;
-      case 'Docs': this.gpaBonus = 0.20; break;
-      case 'Algorithm': this.gpaBonus = 0.50; break;
-      case 'Coffee': this.gpaBonus = 0.0; break;
+      case 'Shoes': this.distanceBonus = 20; break;
+      case 'Coffee': this.distanceBonus = 0; break;
     }
     
     // Setup physics body
