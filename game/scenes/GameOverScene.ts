@@ -71,9 +71,9 @@ export default class GameOverScene extends Phaser.Scene {
     // 6. Reason Text - styled like a nice quote
     const reasonBox = this.add.graphics();
     reasonBox.fillStyle(0x000000, 0.5);
-    reasonBox.fillRoundedRect(40, 560, 320, 80, 16);
+    reasonBox.fillRoundedRect(40, 530, 320, 80, 16);
 
-    this.add.text(200, 600, this.reason, {
+    this.add.text(200, 570, this.reason, {
       fontSize: '22px',
       color: '#e2e8f0',
       fontFamily: 'sans-serif',
@@ -83,7 +83,7 @@ export default class GameOverScene extends Phaser.Scene {
     }).setOrigin(0.5);
     
     // 7. Polished "Try Again" Button using a Container
-    const btnContainer = this.add.container(200, 710);
+    const btnContainer = this.add.container(200, 680);
     
     const btnShadow = this.add.graphics();
     btnShadow.fillStyle(0x000000, 0.4);

@@ -8,18 +8,18 @@ export default class BootScene extends Phaser.Scene {
   preload() {
     const width = this.cameras.main.width;
     const height = this.cameras.main.height;
-    
+
     // Background
     this.cameras.main.setBackgroundColor('#1a1a2e');
-    
-    const loadingText = this.add.text(width / 2, height / 2 - 50, 'STUDYING...', {
+
+    const loadingText = this.add.text(width / 2, height / 2 - 50, 'running...', {
       fontFamily: 'sans-serif',
       fontSize: '28px',
       fontStyle: '900',
       color: '#ffffff'
     });
     loadingText.setOrigin(0.5, 0.5);
-    
+
     // Progress box
     const progressBar = this.add.graphics();
     const progressBox = this.add.graphics();
@@ -27,14 +27,14 @@ export default class BootScene extends Phaser.Scene {
     progressBox.fillRoundedRect(width / 2 - 110, height / 2, 220, 30, 15);
     progressBox.lineStyle(2, 0x44ff44, 1);
     progressBox.strokeRoundedRect(width / 2 - 110, height / 2, 220, 30, 15);
-    
+
     this.load.on('progress', (value: number) => {
       progressBar.clear();
       progressBar.fillStyle(0x44ff44, 1);
       progressBar.fillRoundedRect(width / 2 - 105, height / 2 + 5, 210 * value, 20, 10);
-      loadingText.setText(`STUDYING... ${Math.floor(value * 100)}%`);
+      loadingText.setText(`running... ${Math.floor(value * 100)}%`);
     });
-    
+
     this.load.on('complete', () => {
       progressBar.destroy();
       progressBox.destroy();
@@ -48,19 +48,19 @@ export default class BootScene extends Phaser.Scene {
       'jump', 'duck', 'fall', 'getup',
       'celebrate', 'sad', 'angry', 'sleep'
     ];
-    
+
     sprites.forEach(sprite => {
       this.load.image(`devindi-${sprite}`, `assets/character/devindi-${sprite}.png`);
     });
 
     this.load.image('bg-seamless', 'assets/seamless_road.jpg');
-    
+
     this.load.image('chaser', 'assets/character/chaser.png');
     this.load.image('icon-shoes', 'assets/icons/icon-shoes.png');
     this.load.image('icon-coffee', 'assets/icons/icon-coffee.png');
     this.load.image('icon-ring', 'assets/icons/icon-ring.png');
     this.load.image('icon-bouquet', 'assets/icons/icon-bouquet.png');
-    
+
     // SFX
     this.load.audio('sfx-jump', 'assets/sfx/jump.wav');
     this.load.audio('sfx-collect', 'assets/sfx/collect.wav');
