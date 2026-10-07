@@ -25,7 +25,7 @@ export default class VictoryScene extends Phaser.Scene {
     });
     
     // Graduated Image
-    const player = this.add.image(width / 2, height / 2 - 50, 'lomasha-celebrate');
+    const player = this.add.image(width / 2, height / 2 - 50, 'devindi-celebrate');
     player.setScale(2.0);
     
     // Bounce animation

@@ -11,7 +11,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   private shadow!: Phaser.GameObjects.Ellipse;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
-    super(scene, x, y, 'lomasha-run1');
+    super(scene, x, y, 'devindi-run1');
     
     scene.add.existing(this);
     scene.physics.add.existing(this);
@@ -28,7 +28,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     this.body.setSize(this.width * 0.5, this.height * 0.8);
     this.body.setOffset(this.width * 0.25, this.height * 0.2);
     
-    this.play('lomasha-run');
+    this.play('devindi-run');
   }
 
   update(time: number, delta: number) {
@@ -40,11 +40,11 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     
     // Ensure animation logic based on state
     if (this.isJumping) {
-      this.setTexture('lomasha-jump');
+      this.setTexture('devindi-jump');
       this.stop(); // Stop run anim
       this.shadow.setScale(0.5); // Shrink shadow when jumping
     } else if (this.isDucking) {
-      this.setTexture('lomasha-duck');
+      this.setTexture('devindi-duck');
       this.stop();
       this.shadow.setScale(1.2);
       // Adjust hitbox
@@ -53,7 +53,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     } else {
       this.shadow.setScale(1.0);
       if (!this.anims.isPlaying) {
-        this.play('lomasha-run');
+        this.play('devindi-run');
         (this.body as Phaser.Physics.Arcade.Body).setSize(this.width * 0.5, this.height * 0.8);
         (this.body as Phaser.Physics.Arcade.Body).setOffset(this.width * 0.25, this.height * 0.2);
       }
@@ -104,7 +104,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   }
 
   hit() {
-    this.setTexture('lomasha-fall');
+    this.setTexture('devindi-fall');
     this.stop();
   }
 }

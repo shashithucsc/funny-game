@@ -50,7 +50,7 @@ export default class BootScene extends Phaser.Scene {
     ];
     
     sprites.forEach(sprite => {
-      this.load.image(`lomasha-${sprite}`, `assets/character/lomasha-${sprite}.png`);
+      this.load.image(`devindi-${sprite}`, `assets/character/devindi-${sprite}.png`);
     });
 
     this.load.image('bg-seamless', 'assets/seamless_road.jpg');
@@ -73,12 +73,12 @@ export default class BootScene extends Phaser.Scene {
     // Create animations if using sprite sheets, but we have individual images
     // So we can create an animation from the individual frames
     this.anims.create({
-      key: 'lomasha-run',
+      key: 'devindi-run',
       frames: [
-        { key: 'lomasha-run1' },
-        { key: 'lomasha-run2' },
-        { key: 'lomasha-run3' },
-        { key: 'lomasha-run4' }
+        { key: 'devindi-run1' },
+        { key: 'devindi-run2' },
+        { key: 'devindi-run3' },
+        { key: 'devindi-run4' }
       ],
       frameRate: 10,
       repeat: -1

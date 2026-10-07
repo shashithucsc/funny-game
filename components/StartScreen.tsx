@@ -56,8 +56,8 @@ export default function App() {
           </div>
           
           <ul className="text-left space-y-2 mb-8 text-gray-200 w-full text-sm font-medium bg-black/40 p-4 rounded-xl border border-white/10 backdrop-blur-sm">
-            <li>📚 Collect knowledge for GPA</li>
-            <li>⚠️ Avoid failed exams</li>
+            <li>💻 Write Code for GPA</li>
+            <li>⚠️ Avoid Bugs & Conflicts</li>
             <li>☕ Drink coffee for speed</li>
           </ul>
 
@@ -92,18 +92,19 @@ export default function App() {
       
       <div className="z-10 flex flex-col items-center w-full max-w-sm px-4">
         <h1 className="text-5xl font-black text-white mb-1 tracking-tight text-center drop-shadow-2xl">
-          LOMASHA
-          <span className="block text-2xl text-[#44ff44] mt-1 drop-shadow-lg">THE GPA RUN</span>
+          DEVINDI
+          <span className="block text-2xl text-[#44ff44] mt-1 drop-shadow-lg">THE CS RUN</span>
         </h1>
         
-        <p className="text-gray-200 text-lg mb-6 italic drop-shadow-lg">"Run. Study. Panic. Repeat."</p>
+        <p className="text-gray-200 text-lg mb-6 italic drop-shadow-lg">"Code. Debug. Panic. Repeat."</p>
 
         <div className="relative w-48 h-48 mb-8 bg-white/10 rounded-full flex items-center justify-center shadow-[0_0_50px_rgba(37,99,235,0.4)] backdrop-blur-md border border-white/20">
           <Image 
-            src="/assets/character/lomasha-run1.png" 
-            alt="Lomasha" 
+            src="/assets/character/devindi-run1.png" 
+            alt="Devindi" 
             width={130} 
             height={130} 
+            unoptimized
             className="drop-shadow-2xl object-contain"
           />
         </div>

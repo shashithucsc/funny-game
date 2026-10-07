@@ -135,7 +135,7 @@ export default class GameScene extends Phaser.Scene {
       const obs = new Obstacle(this, x, -50, type);
       this.obstacles.add(obs);
     } else {
-      const types = ['Note', 'Note', 'Book', 'Brain', 'Coffee'];
+      const types = ['Snippet', 'Snippet', 'Docs', 'Algorithm', 'Coffee'];
       const type = Phaser.Utils.Array.GetRandom(types);
       const col = new Collectible(this, x, -50, type);
       this.collectibles.add(col);

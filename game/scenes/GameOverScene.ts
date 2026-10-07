@@ -16,20 +16,20 @@ export default class GameOverScene extends Phaser.Scene {
     overlay.fillStyle(0x000000, 0.7);
     overlay.fillRect(0, 0, 400, 800);
 
-    // 2. Glowing shadow behind Lomasha
+    // 2. Glowing shadow behind Devindi
     const glow = this.add.graphics();
     glow.fillStyle(0xffffff, 0.15);
     glow.fillCircle(200, 360, 140);
     glow.fillStyle(0xffffff, 0.3);
     glow.fillCircle(200, 360, 100);
 
-    // 3. Show Sad Lomasha
-    const sadLomasha = this.add.image(200, 350, 'lomasha-sad');
-    sadLomasha.setScale(0.85);
+    // 3. Show Sad Devindi
+    const sadDevindi = this.add.image(200, 350, 'devindi-sad');
+    sadDevindi.setScale(0.85);
     
-    // Animate Lomasha floating slightly
+    // Animate Devindi floating slightly
     this.tweens.add({
-      targets: sadLomasha,
+      targets: sadDevindi,
       y: 360,
       duration: 2000,
       yoyo: true,
@@ -66,7 +66,7 @@ export default class GameOverScene extends Phaser.Scene {
     reasonBox.fillStyle(0x000000, 0.5);
     reasonBox.fillRoundedRect(40, 560, 320, 80, 16);
 
-    this.add.text(200, 600, data.reason || 'Too many books.', {
+    this.add.text(200, 600, data.reason || 'Too many bugs.', {
       fontSize: '22px',
       color: '#e2e8f0',
       fontFamily: 'sans-serif',

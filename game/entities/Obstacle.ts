@@ -26,15 +26,15 @@ export default class Obstacle extends Phaser.Physics.Arcade.Sprite {
     switch (type) {
       case 1:
         this.gpaPenalty = 0.20;
-        this.message = "Failed the exam!";
+        this.message = "Syntax Error!";
         break;
       case 2:
         this.gpaPenalty = 0.30;
-        this.message = "WHERE IS YOUR ASSIGNMENT?";
+        this.message = "Merge Conflict!";
         break;
       case 3:
         this.gpaPenalty = 0.40;
-        this.message = "YOU HAD ONE JOB.";
+        this.message = "Server Crashed!";
         break;
     }
     
